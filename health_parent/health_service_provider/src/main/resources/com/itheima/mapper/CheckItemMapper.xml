@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.mapper.CheckItemMapper">
+
+    <insert id="add" parameterType="CheckItem">
+        insert into t_checkitem values (null ,#{code},#{name},#{sex},#{age},#{price},#{type},#{remark},#{attention},1);
+    </insert>
+
+
+    <select id="findCondition" resultType="CheckItem" parameterType="string">
+        select * from t_checkitem where isDelete = 1
+            <if test="value != null and value.length > 0 ">
+                and code = #{code} or name = #{name}
+            </if>
+
+    </select>
+
+
+    <update id="delete" parameterType="Integer">
+        update t_checkitem set isDelete  = 0 where id = #{id} and isDelete = 1
+    </update>
+
+    <select id="findById" parameterType="Integer" resultType="CheckItem">
+        select * from t_checkitem where id = #{id} and isDelete = 1
+    </select>
+
+    <update id="update" parameterType="CheckItem">
+        update t_checkitem
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="attention != null">
+                attention = #{attention},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id} and isDelete = 1
+    </update>
+
+    <select id="findAll" resultType="CheckItem">
+        select * from t_checkitem where isDelete = 1
+    </select>
+</mapper>

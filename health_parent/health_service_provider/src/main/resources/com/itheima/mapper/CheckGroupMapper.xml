@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.mapper.CheckGroupMapper">
+    <insert id="addCheckGroup" parameterType="checkGroup">
+--         获取上一次添加的数据的id
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select last_insert_id()
+        </selectKey>
+        insert into t_checkgroup values (null,#{code},#{name},#{helpCode},#{sex},#{remark},#{attention},1);
+    </insert>
+
+
+    <select id="findCondition" parameterType="java.lang.String" resultType="checkGroup">
+        select * from t_checkgroup where isDeleted =  1
+        <if test="value != null and value.length > 0">
+            and code = #{code} or name = #{name} or helpCode = #{helpCode}
+        </if>
+    </select>
+
+    <select id="findById" parameterType="int" resultType="checkGroup">
+        select * from t_checkgroup where id = #{id} and isDeleted = 1
+    </select>
+
+    <select id="findCheckItemById" parameterType="int" resultType="java.lang.Integer">
+        select checkitem_id from t_checkgroup_checkitem where checkgroup_id = #{id}
+    </select>
+
+    <delete id="deleteCheckItem_id" parameterType="int">
+        DELETE FROM t_checkgroup_checkitem WHERE checkgroup_id = #{id};
+    </delete>
+
+    <insert id="update" parameterType="map">
+        insert into t_checkgroup_checkitem values(#{checkgroup_id},#{checkitem_id})
+    </insert>
+
+    <update id="editCheckGroup" parameterType="checkGroup">
+        update t_checkgroup
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="helpCode != null">
+                helpCode = #{helpCode},
+            </if>
+            <if test="attention != null">
+                attention = #{attention},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="delete" parameterType="int">
+        update t_checkgroup set isDeleted = 0 where id = #{id}
+    </update>
+
+    <select id="findAll" resultType="checkGroup">
+        select * from t_checkgroup where isDeleted = 1
+    </select>
+</mapper>

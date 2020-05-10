@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.mapper.OrderMapper">
+
+    <select id="findTodayOrderNumber" parameterType="string" resultType="int">
+        select count(*) from t_order where orderDate = #{orderDate}
+    </select>
+
+    <select id="findTodayVisitsNumber" parameterType="string" resultType="int">
+        select count(*) from t_order where orderDate = #{orderDate} and orderStatus = '已到诊'
+    </select>
+
+    <select id="thisWeekOrderNumber" resultType="int" parameterType="map">
+        SELECT COUNT(*) FROM t_order WHERE orderDate BETWEEN #{first_Day} AND #{last_Day}
+    </select>
+
+    <select id="thisWeekVisitsNumber" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM t_order WHERE orderDate BETWEEN #{first_Day} AND #{last_Day} and orderStatus = '已到诊'
+    </select>
+
+    <select id="thisMonthOrderNumber" resultType="int" parameterType="map">
+         SELECT COUNT(*) FROM t_order WHERE orderDate BETWEEN #{firstDay_OfThisMonth} AND #{lastDay_OfThisMonth}
+    </select>
+
+    <select id="thisMonthVisitsNumber" resultType="int" parameterType="map">
+         SELECT COUNT(*) FROM t_order WHERE orderDate BETWEEN #{firstDay_OfThisMonth} AND #{lastDay_OfThisMonth} and orderStatus = '已到诊'
+    </select>
+
+    <select id="hotSetmeal" resultType="map">
+        SELECT t.name name, COUNT(*) setmeal_count,COUNT(*)/(SELECT COUNT(setmeal_id) FROM t_order
+) proportion ,t.remark remark FROM t_setmeal t , t_order o WHERE t.`id` = o.`setmeal_id` GROUP BY t.`name` ORDER BY COUNT(*) DESC  LIMIT 0 ,3
+    </select>
+</mapper>

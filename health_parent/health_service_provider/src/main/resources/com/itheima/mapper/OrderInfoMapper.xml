@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.mapper.OrderInfoMapper">
+
+    <select id="findDate" parameterType="java.util.Date" resultType="com.itheima.pojo.OrderSetting">
+            select * from t_ordersetting where orderDate = #{date}
+    </select>
+
+
+    <select id="findMember" parameterType="String" resultType="Member">
+        select * from t_member where phoneNumber = #{telephone}
+    </select>
+
+    <select id="isRepeatOrder" parameterType="Order" resultType="Order">
+        SELECT * FROM t_order where member_id = #{memberId} and orderDate = #{orderDate} and setmeal_id = #{setmealId}
+    </select>
+
+    <update id="editReservationsNumber" parameterType="Map">
+        update t_ordersetting set reservations = #{reservations} where orderDate = #{orderDate}
+    </update>
+
+    <insert id="save" parameterType="Member">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+        INSERT INTO `health`.`t_member` VALUES(NULL,NULL,#{name},#{sex},#{idCard},#{phoneNumber},#{regTime},NULL,NULL,NULL,NULL)
+    </insert>
+
+    <insert id="saveMapper" parameterType="Order">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+        insert into t_order values (null,#{memberId},#{orderDate},#{orderType},#{orderStatus},#{setmealId})
+    </insert>
+
+    <select id="findOrderById" resultType="OrderList" parameterType="java.lang.Integer">
+         SELECT t_member.`name` member, t_setmeal.`name` setmeal,t_order.`orderDate`,t_order.`orderType`  FROM t_order,t_member,t_setmeal WHERE t_order.`member_id` = t_member.`id` AND t_order.`setmeal_id` = t_setmeal.`id` AND t_order.`id` = #{orderId}
+    </select>
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.mapper.OrdersettingMapper">
+
+    <select id="isSave" resultType="java.lang.Long" parameterType="java.util.Date">
+        select count(*) from t_ordersetting where orderDate = #{date}
+    </select>
+
+    <update id="editNumber" parameterType="OrderSetting">
+        update t_ordersetting set number = #{number} where orderDate = #{orderDate}
+    </update>
+
+    <insert id="save" parameterType="OrderSetting">
+        insert into t_ordersetting values (null,#{orderDate},#{number},#{reservations});
+    </insert>
+
+    <select id="findOrdersetting" resultType="OrderSetting" parameterType="Map">
+        select * from t_ordersetting WHERE orderDate between #{dateBegin} and #{dateEnd}
+    </select>
+</mapper>

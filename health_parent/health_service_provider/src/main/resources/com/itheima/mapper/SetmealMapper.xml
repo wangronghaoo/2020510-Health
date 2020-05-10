@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.mapper.SetmealMapper">
+
+
+    <!--    添加-->
+    <insert id="add" parameterType="Setmeal">
+        <selectKey order="AFTER" resultType="java.lang.Integer" keyProperty="id">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into t_setmeal
+        values(null,#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img},1)
+    </insert>
+
+    <!--    关联表-->
+
+    <insert id="setMealIdAndCheckGroupId" parameterType="map">
+        insert into t_setmeal_checkgroup values (#{meal_id},#{checkGroup_id})
+    </insert>
+
+    <select id="findCondition" parameterType="string" resultType="Setmeal">
+        select * from t_setmeal where isDelete = 1
+        <if test="value != null and value.length > 0">
+            and code = #{code} or name = #{name} or helpCode = #{helpCode}
+        </if>
+    </select>
+
+    <select id="findAll" resultType="Setmeal">
+         select * from t_setmeal where isDelete = 1
+    </select>
+
+    <select id="findById" resultType="Setmeal" parameterType="int">
+        select * from t_setmeal where id = #{id} and isDelete = 1
+    </select>
+
+    <select id="findCheckGroupId" parameterType="int" resultType="int">
+        select checkgroup_id from t_setmeal_checkgroup where setmeal_id = #{id}
+    </select>
+
+    <delete id="deleteCheckGroupIds" parameterType="int">
+        delete from t_setmeal_checkgroup where setmeal_id = #{id}
+    </delete>
+
+    <update id="editById" parameterType="Setmeal">
+        updata t_setmeal
+        <set>
+            <if test="name != null and name.length > 0">
+                name = #{name}
+            </if>
+            <if test="code != null and code.length > 0">
+                code = #{code}
+            </if>
+            <if test="helpCode != null and helpCode.length > 0">
+                helpCode = #{helpCode}
+            </if>
+            <if test="sex != null and sex.length > 0">
+                sex = #{sex}
+            </if>
+            <if test="age != null and age.length > 0">
+                age = #{age}
+            </if>
+            <if test="price != null and price.length > 0">
+                price = #{price}
+            </if>
+            <if test="remark != null and remark.length > 0">
+                remark = #{remark}
+            </if>
+            <if test="attention != null and attention.length > 0">
+                attention = #{attention}
+            </if>
+            <if test="img != null and img.length > 0">
+                img = #{img}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="delete" parameterType="int">
+            update t_setmeal set isDelete =  0 where id = #{id}
+    </update>
+
+    <select id="findAllSetmeal" resultType="Setmeal">
+        select * from t_setmeal where isDelete = 1
+    </select>
+
+
+    <resultMap id="findSetMeal" type="Setmeal">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="code" column="code"></result>
+        <result property="helpCode" column="helpCode"></result>
+        <result property="sex" column="sex"></result>
+        <result property="age" column="age"></result>
+        <result property="price" column="price"></result>
+        <result property="remark" column="remark"></result>
+        <result property="attention" column="attention"></result>
+        <result property="img" column="img"></result>
+        <collection property="checkGroups" ofType="com.itheima.pojo.CheckGroup" javaType="ArrayList">
+            <id property="id" column="id"></id>
+            <result property="code" column="code"></result>
+            <result property="name" column="name"></result>
+            <result property="helpCode" column="helpCode"></result>
+            <result property="sex" column="sex"></result>
+            <result property="remark" column="remark"></result>
+            <result property="attention" column="attention"></result>
+            <collection property="checkItems" ofType="com.itheima.pojo.CheckItem" javaType="ArrayList">
+                <id property="id" column="id"></id>
+                <result property="code" column="code"></result>
+                <result property="name" column="name"></result>
+                <result property="sex" column="sex"></result>
+                <result property="age" column="age"></result>
+                <result property="price" column="price"></result>
+                <result property="type" column="type"></result>
+                <result property="remark" column="remark"></result>
+                <result property="attention" column="attention"></result>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="findCheckGroupAndCheckItemBySetMealId" resultMap="findSetMeal" parameterType="int">
+        SELECT t_setmeal.* , t_checkgroup.*, t_checkitem.* FROM t_setmeal,t_checkitem ,t_checkgroup WHERE t_setmeal.`id` = #{id}  AND t_checkgroup.`id`IN(SELECT t_checkgroup.`id` FROM t_checkgroup WHERE id IN
+        (SELECT t_setmeal_checkgroup.`checkgroup_id` FROM t_setmeal_checkgroup
+        WHERE t_setmeal_checkgroup.`setmeal_id` = (SELECT t_setmeal.`id` FROM t_setmeal WHERE id = #{id}))) AND t_checkitem.`id` IN
+        (SELECT checkitem_id FROM t_checkgroup_checkitem WHERE checkgroup_id IN
+        (SELECT t_checkgroup.`id` FROM t_checkgroup WHERE id IN
+        (SELECT t_setmeal_checkgroup.`checkgroup_id` FROM t_setmeal_checkgroup
+        WHERE t_setmeal_checkgroup.`setmeal_id` = (SELECT t_setmeal.`id` FROM t_setmeal WHERE id = #{id}))));
+    </select>
+
+
+    <select id="findSetMealAndCount" resultType="Map">
+        SELECT t.name, COUNT(o.id) value FROM t_setmeal t , t_order o WHERE t.`id` = o.`setmeal_id` GROUP BY t.`name`
+    </select>
+</mapper>
