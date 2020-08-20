@@ -11,8 +11,8 @@ public class ALiYunUtils {
 
     public static String endpoint = "https://oss-cn-beijing.aliyuncs.com";
     //阿里云主账号AccessKey的访问权限
-    public static String accessKeyId = "LTAI4FmJ4vDpLvjwteyapsfP";
-    public static String accessKeySecret = "B32Zhsz5ulGDnuHxWsD4LQR9KLkfRi";
+    public static String accessKeyId = "";
+    public static String accessKeySecret = "";
     //存储空间
     public static String bucketName = "healthh";
 
