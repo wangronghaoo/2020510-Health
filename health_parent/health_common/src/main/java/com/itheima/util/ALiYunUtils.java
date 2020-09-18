@@ -14,7 +14,7 @@ public class ALiYunUtils {
     public static String accessKeyId = "";
     public static String accessKeySecret = "";
     //存储空间
-    public static String bucketName = "healthh";
+    public static String bucketName = "";
 
     /**
      * 上传文件
